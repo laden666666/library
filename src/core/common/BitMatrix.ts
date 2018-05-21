@@ -64,7 +64,7 @@ export default class BitMatrix /*implements Cloneable*/ {
     //   this.rowSize = (width + 31) / 32
     //   bits = new int[rowSize * height];
     // }
-
+    //rowSize是比width大的32的最小整数，使用rowSize代替width效率会更高
     public constructor(private width: number /*int*/, private height?: number /*int*/,
         private rowSize?: number /*int*/, private bits?: Int32Array) {
         if (undefined === height || null === height) {

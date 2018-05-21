@@ -33,6 +33,7 @@ export default class MathUtils {
      * @param d real value to round
      * @return nearest {@code int}
      */
+    //取整函数，四舍五入，如果是-x.5会和Math.round不同，比Math.round快，为什么？？？？？？
     public static round(d: number/*float*/): number /*int*/ {
         if (NaN === d) return 0;
         if (d <= Number.MIN_SAFE_INTEGER) return Number.MIN_SAFE_INTEGER;
@@ -48,6 +49,8 @@ export default class MathUtils {
      * @param bY point B y coordinate
      * @return Euclidean distance between points A and B
      */
+
+    //求a、b两点的距离
     public static distance(aX: number/*float|int*/, aY: number/*float|int*/, bX: number/*float|int*/, bY: number/*float|int*/): number/*float*/ {
         const xDiff = aX - bX;
         const yDiff = aY - bY;
@@ -71,6 +74,7 @@ export default class MathUtils {
      * @param array values to sum
      * @return sum of values in array
      */
+    // Int32Array求和
     public static sum(array: Int32Array): number /*int*/ {
         let count = 0;
         for (let i = 0, length = array.length; i !== length; i++) {

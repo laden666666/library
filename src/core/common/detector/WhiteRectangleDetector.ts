@@ -31,6 +31,7 @@ import MathUtils from './MathUtils';
  *
  * @author David Olivier
  */
+//检测图像内的候选条码类矩形区域。 它从图像的中心开始，增加候选区域的大小，直到找到一个白色的矩形区域。 通过跟踪它遇到的最后黑点，它确定了条形码的角落。
 export default class WhiteRectangleDetector {
 
     private static INIT_SIZE = 10;
