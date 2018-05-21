@@ -38,6 +38,7 @@ import StringBuilder from './../util/StringBuilder';
  * @author Sean Owen
  * @author dswitkin@google.com (Daniel Switkin)
  */
+//用一个矩阵保存图像，该矩阵的行是32的整数倍，这样使用Int32Array保存效率高
 export default class BitMatrix /*implements Cloneable*/ {
 
     /**
@@ -89,6 +90,7 @@ export default class BitMatrix /*implements Cloneable*/ {
      * @param image bits of the image, as a row-major 2D array. Elements are arrays representing rows
      * @return {@link BitMatrix} representation of image
      */
+    //用一个二维boolean（二值图）创建该矩阵
     public static parseFromBooleanArray(image: boolean[][]): BitMatrix {
         const height = image.length;
         const width = image[0].length;
@@ -104,6 +106,7 @@ export default class BitMatrix /*implements Cloneable*/ {
         return bits;
     }
 
+    //??????????????????????
     public static parseFromString(stringRepresentation: string, setString: string, unsetString: string): BitMatrix {
         if (stringRepresentation === null) {
             throw new Exception(Exception.IllegalArgumentException, 'stringRepresentation cannot be null');
@@ -169,7 +172,10 @@ export default class BitMatrix /*implements Cloneable*/ {
      * @return value of given bit in matrix
      */
     public get(x: number /*int*/, y: number /*int*/): boolean {
+        //考虑x大于32的情况
         const offset = y * this.rowSize + Math.floor(x / 32);
+        //(x & 0x1f)相当于x % 32
+        //>>> (x & 0x1f)) & 1 相当于仅取32位数中(x % 32)对应的位的值
         return ((this.bits[offset] >>> (x & 0x1f)) & 1) !== 0;
     }
 
