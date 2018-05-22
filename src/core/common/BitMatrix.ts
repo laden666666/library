@@ -38,7 +38,7 @@ import StringBuilder from './../util/StringBuilder';
  * @author Sean Owen
  * @author dswitkin@google.com (Daniel Switkin)
  */
-//用一个矩阵保存图像，该矩阵的行是32的整数倍，这样使用Int32Array保存效率高
+//用一个矩阵保存二只图像，该矩阵的行是32的整数倍，这样使用Int32Array保存效率高，一个像素点用1bit保存，因此1个Int32会保存32个像素，所以该结构难点在像素坐标到Int32Array数组的转换，不过这些细节不对外暴露
 export default class BitMatrix /*implements Cloneable*/ {
 
     /**
@@ -212,6 +212,7 @@ export default class BitMatrix /*implements Cloneable*/ {
      *
      * @param mask XOR mask
      */
+    //使用另一个等大的二值做每个对应像素点的异或运算
     public xor(mask: BitMatrix): void {
         if (this.width !== mask.getWidth() || this.height !== mask.getHeight()
             || this.rowSize !== mask.getRowSize()) {
@@ -248,6 +249,7 @@ export default class BitMatrix /*implements Cloneable*/ {
      * @param width The width of the region
      * @param height The height of the region
      */
+    //给某个矩形区域赋true值
     public setRegion(left: number /*int*/, top: number /*int*/, width: number /*int*/, height: number /*int*/): void {
         if (top < 0 || left < 0) {
             throw new Exception(Exception.IllegalArgumentException, 'Left and top must be nonnegative');
@@ -265,6 +267,7 @@ export default class BitMatrix /*implements Cloneable*/ {
         for (let y = top; y < bottom; y++) {
             const offset = y * rowSize;
             for (let x = left; x < right; x++) {
+                //一个个赋值效率会不会低？是否可以一行行赋值？？？
                 bits[offset + Math.floor(x / 32)] |= ((1 << (x & 0x1f)) & 0xFFFFFFFF);
             }
         }
@@ -278,8 +281,10 @@ export default class BitMatrix /*implements Cloneable*/ {
      * @return The resulting BitArray - this reference should always be used even when passing
      *         your own row
      */
+    //获取某行
     public getRow(y: number /*int*/, row?: BitArray): BitArray {
         if (row === null || row === undefined || row.getSize() < this.width) {
+            //row.getSize() < this.width 应该给数组扩容，而不该直接赋给新值吧？
             row = new BitArray(this.width);
         } else {
             row.clear();

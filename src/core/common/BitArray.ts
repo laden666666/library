@@ -164,6 +164,7 @@ export default class BitArray /*implements Cloneable*/ {
      * @param newBits the new value of the next 32 bits. Note again that the least-significant bit
      * corresponds to bit i, the next-least-significant to i+1, and so on.
      */
+    //数组按位置赋值
     public setBulk(i: number /*int*/, newBits: number /*int*/): void {
         this.bits[Math.floor(i / 32)] = newBits;
     }
