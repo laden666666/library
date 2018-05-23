@@ -201,6 +201,7 @@ export default class BitMatrix /*implements Cloneable*/ {
      * @param x The horizontal component (i.e. which column)
      * @param y The vertical component (i.e. which row)
      */
+    //反转，和set差不多，^= ((1 << (x & 0x1f)) & 0xFFFFFFFF)没看懂
     public flip(x: number /*int*/, y: number /*int*/): void {
         const offset = y * this.rowSize + Math.floor(x / 32);
         this.bits[offset] ^= ((1 << (x & 0x1f)) & 0xFFFFFFFF);
