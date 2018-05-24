@@ -38,7 +38,7 @@ import StringBuilder from './../util/StringBuilder';
  * @author Sean Owen
  * @author dswitkin@google.com (Daniel Switkin)
  */
-//用一个矩阵保存二只图像，该矩阵的行是32的整数倍，这样使用Int32Array保存效率高，一个像素点用1bit保存，因此1个Int32会保存32个像素，所以该结构难点在像素坐标到Int32Array数组的转换，不过这些细节不对外暴露
+// 用一个矩阵保存二只图像，该矩阵的行是32的整数倍，这样使用Int32Array保存效率高，一个像素点用1bit保存，因此1个Int32会保存32个像素，所以该结构难点在像素坐标到Int32Array数组的转换，不过这些细节不对外暴露
 export default class BitMatrix /*implements Cloneable*/ {
 
     /**
@@ -65,7 +65,7 @@ export default class BitMatrix /*implements Cloneable*/ {
     //   this.rowSize = (width + 31) / 32
     //   bits = new int[rowSize * height];
     // }
-    //rowSize是比width大的32的最小整数，使用rowSize代替width效率会更高
+    // rowSize是比width大的32的最小整数，使用rowSize代替width效率会更高
     public constructor(private width: number /*int*/, private height?: number /*int*/,
         private rowSize?: number /*int*/, private bits?: Int32Array) {
         if (undefined === height || null === height) {
@@ -90,7 +90,7 @@ export default class BitMatrix /*implements Cloneable*/ {
      * @param image bits of the image, as a row-major 2D array. Elements are arrays representing rows
      * @return {@link BitMatrix} representation of image
      */
-    //用一个二维boolean（二值图）创建该矩阵
+    // 用一个二维boolean（二值图）创建该矩阵
     public static parseFromBooleanArray(image: boolean[][]): BitMatrix {
         const height = image.length;
         const width = image[0].length;
@@ -106,7 +106,7 @@ export default class BitMatrix /*implements Cloneable*/ {
         return bits;
     }
 
-    //??????????????????????
+    // ??????????????????????
     public static parseFromString(stringRepresentation: string, setString: string, unsetString: string): BitMatrix {
         if (stringRepresentation === null) {
             throw new Exception(Exception.IllegalArgumentException, 'stringRepresentation cannot be null');
@@ -172,10 +172,10 @@ export default class BitMatrix /*implements Cloneable*/ {
      * @return value of given bit in matrix
      */
     public get(x: number /*int*/, y: number /*int*/): boolean {
-        //考虑x大于32的情况
+        // 考虑x大于32的情况
         const offset = y * this.rowSize + Math.floor(x / 32);
-        //(x & 0x1f)相当于x % 32
-        //>>> (x & 0x1f)) & 1 相当于仅取32位数中(x % 32)对应的位的值
+        // (x & 0x1f)相当于x % 32
+        // >>> (x & 0x1f)) & 1 相当于仅取32位数中(x % 32)对应的位的值
         return ((this.bits[offset] >>> (x & 0x1f)) & 1) !== 0;
     }
 
@@ -201,7 +201,7 @@ export default class BitMatrix /*implements Cloneable*/ {
      * @param x The horizontal component (i.e. which column)
      * @param y The vertical component (i.e. which row)
      */
-    //反转，和set差不多，^= ((1 << (x & 0x1f)) & 0xFFFFFFFF)没看懂
+    // 反转，和set差不多，^= ((1 << (x & 0x1f)) & 0xFFFFFFFF)没看懂
     public flip(x: number /*int*/, y: number /*int*/): void {
         const offset = y * this.rowSize + Math.floor(x / 32);
         this.bits[offset] ^= ((1 << (x & 0x1f)) & 0xFFFFFFFF);
@@ -213,7 +213,7 @@ export default class BitMatrix /*implements Cloneable*/ {
      *
      * @param mask XOR mask
      */
-    //使用另一个等大的二值做每个对应像素点的异或运算
+    // 使用另一个等大的二值做每个对应像素点的异或运算
     public xor(mask: BitMatrix): void {
         if (this.width !== mask.getWidth() || this.height !== mask.getHeight()
             || this.rowSize !== mask.getRowSize()) {
@@ -250,7 +250,7 @@ export default class BitMatrix /*implements Cloneable*/ {
      * @param width The width of the region
      * @param height The height of the region
      */
-    //给某个矩形区域赋true值
+    // 给某个矩形区域赋true值
     public setRegion(left: number /*int*/, top: number /*int*/, width: number /*int*/, height: number /*int*/): void {
         if (top < 0 || left < 0) {
             throw new Exception(Exception.IllegalArgumentException, 'Left and top must be nonnegative');
@@ -268,7 +268,7 @@ export default class BitMatrix /*implements Cloneable*/ {
         for (let y = top; y < bottom; y++) {
             const offset = y * rowSize;
             for (let x = left; x < right; x++) {
-                //一个个赋值效率会不会低？是否可以一行行赋值？？？
+                // 一个个赋值效率会不会低？是否可以一行行赋值？？？
                 bits[offset + Math.floor(x / 32)] |= ((1 << (x & 0x1f)) & 0xFFFFFFFF);
             }
         }
@@ -282,10 +282,10 @@ export default class BitMatrix /*implements Cloneable*/ {
      * @return The resulting BitArray - this reference should always be used even when passing
      *         your own row
      */
-    //获取某行
+    // 获取某行
     public getRow(y: number /*int*/, row?: BitArray): BitArray {
         if (row === null || row === undefined || row.getSize() < this.width) {
-            //row.getSize() < this.width 应该给数组扩容，而不该直接赋给新值吧？
+            // row.getSize() < this.width 应该给数组扩容，而不该直接赋给新值吧？
             row = new BitArray(this.width);
         } else {
             row.clear();
@@ -310,11 +310,13 @@ export default class BitMatrix /*implements Cloneable*/ {
     /**
      * Modifies this {@code BitMatrix} to represent the same but rotated 180 degrees
      */
+    // 180度旋转图片
     public rotate180(): void {
         const width = this.getWidth();
         const height = this.getHeight();
         let topRow = new BitArray(width);
         let bottomRow = new BitArray(width);
+        // 第一行和最后一行兑换，这一只需要总高度的一般就可以全部换完
         for (let i = 0, length = Math.floor((height + 1) / 2); i < length; i++) {
             topRow = this.getRow(i, topRow);
             bottomRow = this.getRow(height - 1 - i, bottomRow);
