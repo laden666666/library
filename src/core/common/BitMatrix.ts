@@ -332,6 +332,7 @@ export default class BitMatrix /*implements Cloneable*/ {
      *
      * @return {@code left,top,width,height} enclosing rectangle of all 1 bits, or null if it is all white
      */
+    //找到图片中，实际内容的外切矩形
     public getEnclosingRectangle(): Int32Array {
         const width = this.width;
         const height = this.height;
@@ -375,6 +376,7 @@ export default class BitMatrix /*implements Cloneable*/ {
             }
         }
 
+        // 未找到返回空
         if (right < left || bottom < top) {
             return null;
         }
@@ -387,6 +389,7 @@ export default class BitMatrix /*implements Cloneable*/ {
      *
      * @return {@code x,y} coordinate of top-left-most 1 bit, or null if it is all white
      */
+    // 返回内容的左上角坐标（最上边的点中最靠左的）
     public getTopLeftOnBit(): Int32Array {
         const rowSize = this.rowSize;
         const bits = this.bits;
@@ -395,6 +398,8 @@ export default class BitMatrix /*implements Cloneable*/ {
         while (bitsOffset < bits.length && bits[bitsOffset] === 0) {
             bitsOffset++;
         }
+
+        // 未找到返回空
         if (bitsOffset === bits.length) {
             return null;
         }
@@ -410,6 +415,7 @@ export default class BitMatrix /*implements Cloneable*/ {
         return Int32Array.from([x, y]);
     }
 
+    // 返回内容的右下角坐标（最右边的点中最靠右的）
     public getBottomRightOnBit(): Int32Array {
         const rowSize = this.rowSize;
         const bits = this.bits;
@@ -506,6 +512,7 @@ export default class BitMatrix /*implements Cloneable*/ {
     }
 
     private buildToString(setString: string, unsetString: string, lineSeparator: string) {
+        // java的StringBuilder 无力吐槽
         let result = new StringBuilder();
         result.append(lineSeparator);
         for (let y = 0, height = this.height; y < height; y++) {
