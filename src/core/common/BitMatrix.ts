@@ -39,6 +39,7 @@ import StringBuilder from './../util/StringBuilder';
  * @author dswitkin@google.com (Daniel Switkin)
  */
 // 用一个矩阵保存二只图像，该矩阵的行是32的整数倍，这样使用Int32Array保存效率高，一个像素点用1bit保存，因此1个Int32会保存32个像素，所以该结构难点在像素坐标到Int32Array数组的转换，不过这些细节不对外暴露
+// 之所以是32位，应该是因为java的int的长度。这里为了对应所以使用Int32Array
 export default class BitMatrix /*implements Cloneable*/ {
 
     /**
