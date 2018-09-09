@@ -25,6 +25,7 @@
  *
  * @author Sean Owen
  */
+// 一个二维码编码的常量类
 const enum BarcodeFormat {
     /** Aztec 2D barcode format. */
     AZTEC,
