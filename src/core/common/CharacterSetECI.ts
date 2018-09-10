@@ -16,11 +16,14 @@
 
 /*namespace com.google.zxing.common {*/
 
+// 一个编码方式的类
+
 import Exception from './../Exception';
 
 /*import java.util.HashMap;*/
 /*import java.util.Map;*/
 
+// 定义编码方式的枚举类型
 export const enum CharacterSetValueIdentifiers {
     Cp437,
     ISO8859_1,
