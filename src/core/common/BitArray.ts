@@ -28,9 +28,12 @@ import Exception from './../Exception';
  *
  * @author Sean Owen
  */
+// 一个bit的数组。因为js没有bit数组，所以采用Int32Array做数据存储形式。java里没有bit数组，因此需要自己实现，js中也没有bit数组，所以沿用java版的实现。比起二维的BitMatrix这个BitArray简单很多。
 export default class BitArray /*implements Cloneable*/ {
 
+    // 数组长度应该是Int32Array的长度/32。这里之所以没有bits.length * 32做长度。是因为这样只能只能实现32整数倍的bit数组，对于长度1位的数组无法显示。
     private size: number;
+    // 保存bit的存储单元。
     private bits: Int32Array;
 
     // public constructor() {
@@ -51,8 +54,10 @@ export default class BitArray /*implements Cloneable*/ {
     public constructor(size?: number /*int*/, bits?: Int32Array) {
         if (undefined === size) {
             this.size = 0;
+            // 为什么size等于0，bits有一位？因为size在0时，bits应该也为空数组才对
             this.bits = new Int32Array(1);
         } else {
+            // 这里没有做size和bits的长度的校验
             this.size = size;
             if (undefined === bits || null === bits) {
                 this.bits = BitArray.makeArray(size);
@@ -66,13 +71,17 @@ export default class BitArray /*implements Cloneable*/ {
         return this.size;
     }
 
+    // 获取字节长度
     public getSizeInBytes(): number /*int*/ {
+        // 加7是为了做向上取整
         return Math.floor((this.size + 7) / 8);
     }
 
+    // 确定当前容量能够满足指定容量，如果当前容量小于指定容量会自动扩展
     private ensureCapacity(size: number /*int*/): void {
         if (size > this.bits.length * 32) {
             const newBits = BitArray.makeArray(size);
+            // 将原数组的数据复制到新数组中
             System.arraycopy(this.bits, 0, newBits, 0, this.bits.length);
             this.bits = newBits;
         }
@@ -82,6 +91,7 @@ export default class BitArray /*implements Cloneable*/ {
      * @param i bit to get
      * @return true iff bit i is set
      */
+    // 获取指定位bit的数据
     public get(i: number /*int*/): boolean {
         return (this.bits[Math.floor(i / 32)] & (1 << (i & 0x1F))) !== 0;
     }
@@ -91,6 +101,7 @@ export default class BitArray /*implements Cloneable*/ {
      *
      * @param i bit to set
      */
+    // 设置指定位bit的数据
     public set(i: number /*int*/): void {
         this.bits[Math.floor(i / 32)] |= 1 << (i & 0x1F);
     }
@@ -100,6 +111,7 @@ export default class BitArray /*implements Cloneable*/ {
      *
      * @param i bit to set
      */
+    // 按位取反
     public flip(i: number /*int*/): void {
         this.bits[Math.floor(i / 32)] ^= 1 << (i & 0x1F);
     }
@@ -110,12 +122,15 @@ export default class BitArray /*implements Cloneable*/ {
      *  at or beyond this given index
      * @see #getNextUnset(int)
      */
+    // 从给定索引开始设置的第一个位的索引，如果没有则设置size等于或超出此指数
     public getNextSet(from: number /*int*/): number /*int*/ {
         const size = this.size;
+        // 如果from超出size，则直接返回size
         if (from >= size) {
             return size;
         }
         const bits = this.bits;
+        //找出from对应在bits中的位置
         let bitsOffset = Math.floor(from / 32);
         let currentBits = bits[bitsOffset];
         // mask off lesser bits first
@@ -143,8 +158,10 @@ export default class BitArray /*implements Cloneable*/ {
         }
         const bits = this.bits;
         let bitsOffset = Math.floor(from / 32);
+        // 按位取反做什么？？？
         let currentBits = ~bits[bitsOffset];
         // mask off lesser bits first
+        // from取出最低的32位
         currentBits &= ~((1 << (from & 0x1F)) - 1);
         const length = bits.length;
         while (currentBits === 0) {
@@ -175,6 +192,7 @@ export default class BitArray /*implements Cloneable*/ {
      * @param start start of range, inclusive.
      * @param end end of range, exclusive
      */
+    // 将指定bit范围设置为1
     public setRange(start: number /*int*/, end: number /*int*/): void {
         if (end < start || start < 0 || end > this.size) {
             throw new Exception(Exception.IllegalArgumentException);
@@ -198,6 +216,7 @@ export default class BitArray /*implements Cloneable*/ {
     /**
      * Clears all bits (sets to false).
      */
+    // 清空列表
     public clear(): void {
         const max = this.bits.length;
         const bits = this.bits;
@@ -351,6 +370,7 @@ export default class BitArray /*implements Cloneable*/ {
         this.bits = newBits;
     }
 
+    // 创建一个指定bit长度的Int32Array数组，数组用0占位
     private static makeArray(size: number /*int*/): Int32Array {
         return new Int32Array(Math.floor((size + 31) / 32));
     }
